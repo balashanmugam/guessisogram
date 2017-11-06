@@ -56,7 +56,8 @@ private:
 	EGuessStatus GetGuessValidity(FString Word) const;
 	void ValidateGuess(EGuessStatus Status) const;
 
-
+	//starts a new game
+	void newGame();
 
 //Variables.
 	Uint32 MaxTries;

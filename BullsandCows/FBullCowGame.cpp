@@ -2,6 +2,16 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <random>
+#include <time.h>
+// Creates a random direction
+int randomDistribution()
+{
+	std::mt19937 rng;
+	rng.seed(std::random_device()());
+	std::uniform_int_distribution<std::mt19937::result_type> random(0, 5);
+	return random(rng);
+}
 
 
 
@@ -17,7 +27,9 @@ FBullCowGame::FBullCowGame()
 	WordsList.push_back("dent");
 	WordsList.push_back("hear");
 	WordsList.push_back("cold");
-	HiddenWord = WordsList.
+
+
+	HiddenWord = WordsList[randomDistribution()];
 
 	MaxTries = 4;
 	
@@ -122,6 +134,18 @@ void FBullCowGame::ValidateGuess(EGuessStatus Status) const
 	}
 }
 
+void FBullCowGame::newGame()
+{
+	CurrentState = EGameStates::Progress;
+	WordStatus = EGuessStatus::InvalidState;
+	HiddenWord = WordsList[randomDistribution()];
+
+	MaxTries = 4;
+
+	//Converts the HiddenWord to lowercase.
+	std::transform(HiddenWord.begin(), HiddenWord.end(), HiddenWord.begin(), tolower);
+}
+
 // Gameloop is the function that should be called from main by the programmer.
 void FBullCowGame::GameLoop()
 {
@@ -142,7 +166,18 @@ void FBullCowGame::GameLoop()
 		if (WordStatus == EGuessStatus::Valid && Count.Bulls == HiddenWord.length()) // Condition when the Player has won.
 		{
 			std::cout << "You have won!!" << std::endl;
-			CurrentState = EGameStates::End;
+			std::cout << "\nDo you want to play Again? (y/n): ";
+			std::cin >> Reply;
+			if (Reply == 'y')
+			{
+				newGame();
+				Attempts = 1;
+			}
+			else if (Reply == 'n')
+			{
+				CurrentState = EGameStates::End;
+				break;
+			}
 		}
 		else if (Count.Bulls != HiddenWord.length())
 		{
